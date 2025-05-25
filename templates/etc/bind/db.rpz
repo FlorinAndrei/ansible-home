@@ -1,0 +1,14 @@
+$TTL 60
+@            IN    SOA  localhost. root.localhost.  (
+                          2025052300   ; serial
+                          1h           ; refresh
+                          30m          ; retry
+                          1w           ; expiry
+                          30m)         ; minimum
+                   IN     NS    localhost.
+
+localhost       A   127.0.0.1
+
+andrei.myip.org    A        {{ local_net_prefix }}.1
+florin.myip.org    A        {{ local_net_prefix }}.1
+mihaela.myip.org   A        {{ local_net_prefix }}.1

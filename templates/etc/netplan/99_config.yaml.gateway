@@ -1,0 +1,16 @@
+network:
+  version: 2
+  renderer: networkd
+  ethernets:
+    eth0:
+      addresses:
+        - {{ local_net_prefix }}.253/24
+      routes:
+        - to: default
+          via: {{ local_net_prefix }}.254
+      nameservers:
+          search: [{{ local_domain }}]
+          addresses: [127.0.0.1]
+    enp4s0:
+      dhcp4: true
+      optional: true

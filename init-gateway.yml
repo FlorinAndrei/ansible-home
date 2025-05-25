@@ -1,0 +1,108 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: install Linux headers
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - linux-headers-generic
+          - linux-headers-raspi
+
+    - name: install build-essential
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - build-essential
+
+    - name: install dkms
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - dkms
+
+    - name: enable passwordless sudo
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/sudoers.d/florin
+
+    - name: install Realtek drivers
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - r8168-dkms
+
+    - name: activate Realtek drivers
+      modprobe:
+        name: r8168
+        state: present
+      #ignore_errors: true
+
+    - name: install Bind9
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - bind9
+
+    - name: minimal Bind9 configuration
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/bind/named.conf.options
+        - etc/default/named
+
+    - name: create /etc/systemd/resolved.conf.d
+      file: path=/etc/systemd/resolved.conf.d state=directory
+
+    - name: disable resolved listener
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/systemd/resolved.conf.d/10-disable-resolved-listener.conf
+
+    - name: restart resolved
+      service:
+        name: systemd-resolved
+        enabled: yes
+        state: restarted
+
+    - name: configure networking
+      template: src=templates/{{ item }}.gateway dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/netplan/99_config.yaml
+
+    - name: configure hostname
+      shell: hostnamectl hostname gateway.{{ local_domain }}
+    
+    - name: disable cloud-init
+      file: path=/etc/cloud/cloud-init.disabled state=touch
+
+    - name: remove cloud-init network config
+      file: path=/etc/netplan/50-cloud-init.yaml state=absent
+
+    - name: apply netplan configuration
+      shell: netplan apply
+
+    - name: restart Bind9
+      service:
+        name: bind9
+        enabled: yes
+        state: restarted
+      #ignore_errors: true
+
+    - name: make sure the RTC battery is being charged
+      lineinfile:
+        path: /boot/firmware/config.txt
+        line: "dtparam=rtc_bbat_vchg=3000000"
+        state: present
+        insertafter: EOF

@@ -1,0 +1,15 @@
+$TTL	60
+@	IN	SOA	localhost. root.localhost. (
+		 2025052301		; Serial
+			     1h		; Refresh
+			    30m		; Retry
+			     1w		; Expire
+			 604800 )	; Negative Cache TTL
+    IN  NS  {{ local_net_prefix }}.254.
+;
+
+20	IN	PTR	media.{{ local_domain }}.
+5	IN	PTR	streamer.{{ local_domain }}.
+254	IN	PTR	pi.{{ local_domain }}.
+253	IN	PTR	gateway.{{ local_domain }}.
+1	IN	PTR	server.{{ local_domain }}.
