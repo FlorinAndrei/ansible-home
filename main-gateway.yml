@@ -19,6 +19,16 @@
       name: isc-dhcp-server
       state: restarted
 
+  - name: restart nftables
+    service:
+      name: nftables
+      state: restarted
+
+  - name: restart ssh
+    service:
+      name: ssh
+      state: restarted
+
 
   tasks:
     - name: enable ip forwarding
@@ -39,11 +49,23 @@
           - iftop
           - stress-ng
 
+    - name: configure nftables
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
+      with_items:
+        - etc/nftables.conf
+      notify: restart nftables
+
     - name: enable nftables
       service:
         name: nftables
         enabled: yes
         state: started
+
+    - name: configure ssh
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/ssh/sshd_config.d/99-home.conf
+      notify: restart ssh
 
     - name: full Bind9 configuration (re-applies and then extends minimal configuration from init-gateway.yml)
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
@@ -101,3 +123,12 @@
       with_items:
         - etc/chrony/conf.d/allow.conf
       notify: restart chrony
+
+    - name: install wireguard
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - wireguard
+          - wireguard-tools
