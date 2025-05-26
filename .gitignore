@@ -1,3 +1,4 @@
 inventory-*
 extra-vars.yml
 .vscode
+.venv
