@@ -4,7 +4,7 @@ sudo apt-get full-upgrade
 sudo apt-get install python3-pip python3-venv git
 python3 -m venv .venv
 source .venv/bin/activate
-pip3 install --upgrade ansible ansible-core
+pip install -r requirements.txt
 sudo reboot
 ```
 
