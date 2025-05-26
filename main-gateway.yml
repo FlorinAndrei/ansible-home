@@ -86,11 +86,11 @@
         packages:
           - isc-dhcp-server
 
-    - name: disable isc-dhcp-server (change this to enable after the migration)
+    - name: enable isc-dhcp-server
       service:
         name: isc-dhcp-server
-        enabled: no
-        state: stopped
+        enabled: yes
+        state: started
 
     - name: disable isc-dhcp-server6
       service:
@@ -102,7 +102,7 @@
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
       with_items:
         - etc/dhcp/dhcpd.conf
-      # notify: restart isc-dhcp-server
+      notify: restart isc-dhcp-server
 
     - name: install chrony (also uninstalls systemd-timesyncd)
       apt:
