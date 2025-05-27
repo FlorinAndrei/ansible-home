@@ -23,6 +23,7 @@
           - iotop
           - iftop
           - stress-ng
+          - lm-sensors
 
     - name: install chrony (also uninstalls systemd-timesyncd)
       apt:
