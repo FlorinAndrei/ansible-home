@@ -30,9 +30,7 @@
           - dkms
 
     - name: enable passwordless sudo
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/sudoers.d/florin
+      template: src=templates/etc/sudoers.d/user dest=/etc/sudoers.d/{{ main_user }} owner=root group=root mode=0644
 
     - name: install Realtek drivers
       apt:
