@@ -29,6 +29,11 @@
       name: ssh
       state: restarted
 
+  - name: restart rsyslog
+    service:
+      name: rsyslog
+      state: restarted
+
 
   tasks:
     - name: enable ip forwarding
@@ -78,6 +83,13 @@
         - etc/bind/home.local
         - etc/bind/home.local.reverse
       notify: restart bind9
+
+    - name: configure Bind9 logging
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/rsyslog.d/10-bind.conf
+        - etc/logrotate.d/bind
+      notify: restart rsyslog
 
     - name: install DHCP server
       apt:
