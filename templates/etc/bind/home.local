@@ -1,6 +1,6 @@
 $TTL 60
 @            IN    SOA  localhost. root.localhost.  (
-                          2025052600   ; serial
+                          2025053000   ; serial
                           1h           ; refresh
                           30m          ; retry
                           1w           ; expiry
@@ -9,7 +9,7 @@ $TTL 60
 
 localhost       A   127.0.0.1
 
-server.{{ local_domain }}.   A        {{ local_net_prefix }}.1
-streamer.{{ local_domain }}. A        {{ local_net_prefix }}.5
-media.{{ local_domain }}.    A        {{ local_net_prefix }}.20
-gateway.{{ local_domain }}.  A        {{ local_net_prefix }}.254
+server.{{ local_domain }}.      A  {{ local_net_prefix }}.1
+printer-hp.{{ local_domain }}.  A  {{ local_net_prefix }}.4
+media.{{ local_domain }}.       A  {{ local_net_prefix }}.20
+gateway.{{ local_domain }}.     A  {{ local_net_prefix }}.254
