@@ -46,8 +46,16 @@ ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml --
 ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml
 ```
 
-Server and gateway - check battery:
+Server and gateway:
+
+Check battery:
 
 ```
 cat /sys/devices/platform/soc/soc\:rpi_rtc/rtc/rtc0/*_voltage*
+```
+
+Check CPU fan:
+
+```
+cat /sys/devices/platform/cooling_fan/hwmon/*/fan1_input
 ```
