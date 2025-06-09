@@ -4,7 +4,7 @@ sudo apt-get full-upgrade
 sudo apt-get install python3-pip python3-venv git
 python3 -m venv .venv
 source .venv/bin/activate
-pip install -r requirements.txt
+pip install --upgrade -r requirements.txt
 sudo reboot
 ```
 
