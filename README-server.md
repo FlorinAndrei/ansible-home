@@ -44,6 +44,25 @@ md0 : active raid1 nvme2n1[1] nvme1n1[0]
 unused devices: <none>
 ```
 
+Create filesystem:
+
+```
+root@server:~# mkfs.ext4 /dev/md0
+mke2fs 1.47.0 (5-Feb-2023)
+Discarding device blocks: done
+Creating filesystem with 468810576 4k blocks and 117202944 inodes
+Filesystem UUID: 3035c84f-7836-44bb-a4e9-0d4b7e7a0c51
+Superblock backups stored on blocks:
+        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
+        4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
+        102400000, 214990848
+
+Allocating group tables: done
+Writing inode tables: done
+Creating journal (262144 blocks): done
+Writing superblocks and filesystem accounting information: done
+```
+
 Mount RAID array:
 
 ```
