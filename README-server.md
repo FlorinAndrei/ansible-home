@@ -31,6 +31,19 @@ mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md0 started.
 ```
 
+Check RAID array status (may take a long time to complete, do not wait for this step, keep going):
+
+```
+root@server:~# cat /proc/mdstat
+Personalities : [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
+md0 : active raid1 nvme2n1[1] nvme1n1[0]
+      1875242304 blocks super 1.2 [2/2] [UU]
+      [>....................]  resync =  0.0% (991040/1875242304) finish=12790.8min speed=2441K/sec
+      bitmap: 14/14 pages [56KB], 65536KB chunk
+
+unused devices: <none>
+```
+
 Mount RAID array:
 
 ```
