@@ -25,6 +25,12 @@
           - stress-ng
           - lm-sensors
 
+    - name: get system architecture
+      shell: dpkg --print-architecture
+      register: sys_architecture
+      check_mode: false
+      changed_when: false
+
     - name: install chrony (also uninstalls systemd-timesyncd)
       apt:
         name: "{{ packages }}"
@@ -45,3 +51,35 @@
         - etc/chrony/sources.d/local-ntp-server.sources
         - etc/chrony/chrony.conf
       notify: restart chrony
+
+    - name: install Docker repo GPG key
+      get_url:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /etc/apt/keyrings/docker.asc
+        mode: a+r
+
+    - name: add Docker repo
+      apt_repository:
+        repo: "deb [arch={{ sys_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+        filename: docker
+        state: present
+        update_cache: true
+
+    - name: install Docker
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: no
+      vars:
+        packages:
+          - docker-ce
+          - docker-ce-cli
+          - containerd.io
+          - docker-buildx-plugin
+          - docker-compose-plugin
+
+    - name: add main user to docker group
+      user:
+        name: "{{ main_user }}"
+        groups: docker
+        append: yes
