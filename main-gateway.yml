@@ -71,6 +71,7 @@
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
       with_items:
         - etc/ssh/sshd_config.d/99-home.conf
+        - etc/ssh/banner.txt
       notify: restart ssh
 
     - name: full Bind9 configuration (re-applies and then extends minimal configuration from init-gateway.yml)
