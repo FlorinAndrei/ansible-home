@@ -83,3 +83,20 @@
         name: "{{ main_user }}"
         groups: docker
         append: yes
+
+    - name: install Samba
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - samba
+
+    - name: make sure Samba services are enabled and running
+      service:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - smbd
+        - nmbd
