@@ -54,6 +54,8 @@
           - iftop
           - stress-ng
           - lm-sensors
+          - bind9-dnsutils
+          - bind9-host
 
     - name: configure nftables
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755

@@ -24,6 +24,8 @@
           - iftop
           - stress-ng
           - lm-sensors
+          - bind9-dnsutils
+          - bind9-host
 
     - name: get system architecture
       shell: dpkg --print-architecture
