@@ -9,9 +9,9 @@
       name: chrony
       state: restarted
 
-  - name: restart bind9
+  - name: restart unbound
     service:
-      name: bind9
+      name: unbound
       state: restarted
 
   - name: restart isc-dhcp-server
@@ -76,22 +76,26 @@
         - etc/ssh/banner.txt
       notify: restart ssh
 
-    - name: full Bind9 configuration (re-applies and then extends minimal configuration from init-gateway.yml)
+    - name: full Unbound configuration (re-applies and then extends minimal configuration from init-gateway.yml)
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
       with_items:
-        - etc/bind/named.conf.options
-        - etc/default/named
-        - etc/bind/named.conf.local
-        - etc/bind/db.rpz
-        - etc/bind/home.local
-        - etc/bind/home.local.reverse
-      notify: restart bind9
+        - etc/unbound/unbound.conf.d/10-resolver.conf
+        - etc/unbound/named.cache
+        - etc/unbound/unbound.conf.d/20-nameserver.conf
+        - etc/unbound/home.local
+        - etc/unbound/home.local.reverse
+        - etc/unbound/db.rpz
+      notify: restart unbound
+    
+    - name: touch Unbound log file
+      file: path=/var/log/unbound.log state=touch owner=syslog group=adm mode=0640
+      changed_when: false
 
-    - name: configure Bind9 logging
+    - name: configure Unbound logging
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
       with_items:
-        - etc/rsyslog.d/10-bind.conf
-        - etc/logrotate.d/bind
+        - etc/rsyslog.d/10-unbound.conf
+        - etc/logrotate.d/unbound
       notify: restart rsyslog
 
     - name: install DHCP server

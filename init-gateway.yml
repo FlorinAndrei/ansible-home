@@ -46,19 +46,19 @@
         state: present
       #ignore_errors: true
 
-    - name: install Bind9
+    - name: install Unbound DNS server
       apt:
         name: "{{ packages }}"
         state: present
       vars:
         packages:
-          - bind9
+          - unbound
 
-    - name: minimal Bind9 configuration
+    - name: minimal Unbound resolver configuration
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
       with_items:
-        - etc/bind/named.conf.options
-        - etc/default/named
+        - etc/unbound/unbound.conf.d/10-resolver.conf
+        - etc/unbound/named.cache
 
     - name: create /etc/systemd/resolved.conf.d
       file: path=/etc/systemd/resolved.conf.d state=directory
@@ -91,9 +91,9 @@
     - name: apply netplan configuration
       shell: netplan apply
 
-    - name: restart Bind9
+    - name: restart Unbound
       service:
-        name: bind9
+        name: unbound
         enabled: yes
         state: restarted
       #ignore_errors: true

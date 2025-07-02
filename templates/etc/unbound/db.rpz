@@ -9,6 +9,6 @@ $TTL 60
 
 localhost       A   127.0.0.1
 
-andrei.myip.org    A        {{ local_net_prefix }}.1
-florin.myip.org    A        {{ local_net_prefix }}.1
-mihaela.myip.org   A        {{ local_net_prefix }}.1
+andrei    A        {{ local_net_prefix }}.1
+florin    A        {{ local_net_prefix }}.1
+mihaela   A        {{ local_net_prefix }}.1
