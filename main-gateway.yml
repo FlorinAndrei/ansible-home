@@ -131,7 +131,6 @@
         - etc/unbound/unbound.conf.d/20-nameserver.conf
         - etc/unbound/home.local
         - etc/unbound/home.local.reverse
-        - etc/unbound/db.rpz
         - etc/unbound/README.md
       notify: restart unbound
     
