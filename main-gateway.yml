@@ -132,6 +132,7 @@
         - etc/unbound/home.local
         - etc/unbound/home.local.reverse
         - etc/unbound/db.rpz
+        - etc/unbound/README.md
       notify: restart unbound
     
     - name: touch Unbound log file
