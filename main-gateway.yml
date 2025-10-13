@@ -63,6 +63,16 @@
           - bind9-host
           - qrencode
 
+    - name: install various scripts
+      copy:
+        src: templates/{{ item }}
+        dest: /{{ item }}
+        owner: root
+        group: root
+        mode: 0755
+      with_items:
+        - usr/local/bin/battery.sh
+
     - name: configure nftables
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
       with_items:
