@@ -180,6 +180,17 @@
       with_items:
         - etc/dhcp/dhcpd.conf
       notify: restart isc-dhcp-server
+    
+    - name: touch DHCP server log file
+      file: path=/var/log/dhcpd.log state=touch owner=syslog group=adm mode=0640
+      changed_when: false
+
+    - name: configure DHCP server logging
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/rsyslog.d/10-dhcpd.conf
+        - etc/logrotate.d/dhcpd
+      notify: restart rsyslog
 
     - name: install chrony (also uninstalls systemd-timesyncd)
       apt:
