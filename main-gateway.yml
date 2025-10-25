@@ -115,7 +115,7 @@
         group: root
         mode: '0755'
 
-    - name: loop through the wireguard_clients variable and create a file in /etc/wireguard/clients/{{ client.name }}.conf for each client
+    - name: loop through the wireguard_clients variable and create a file in /etc/wireguard/clients/ for each client
       template:
         src: templates/etc/wireguard/client.conf
         dest: /etc/wireguard/clients/{{ client.name }}.conf
