@@ -3,7 +3,7 @@
   become: yes
 
   tasks:
-    - name: install Linux headers
+    - name: install kernel module build dependencies
       apt:
         name: "{{ packages }}"
         state: present
@@ -11,22 +11,7 @@
       vars:
         packages:
           - linux-headers-generic
-          - linux-headers-raspi
-
-    - name: install build-essential
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
           - build-essential
-
-    - name: install dkms
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
           - dkms
 
     - name: enable passwordless sudo
@@ -48,10 +33,3 @@
 
     - name: apply netplan configuration
       shell: netplan apply
-
-    - name: make sure the RTC battery is being charged
-      lineinfile:
-        path: /boot/firmware/config.txt
-        line: "dtparam=rtc_bbat_vchg=3000000"
-        state: present
-        insertafter: EOF

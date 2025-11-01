@@ -46,7 +46,7 @@ ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml --
 ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml
 ```
 
-Server and gateway:
+Gateway:
 
 Check battery:
 

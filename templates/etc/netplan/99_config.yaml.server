@@ -1,13 +1,14 @@
 network:
   version: 2
-  renderer: networkd
   ethernets:
-    eth0:
+    enp1s0:
       addresses:
-        - {{ local_net_prefix }}.2/24
-      routes:
-        - to: default
-          via: {{ local_net_prefix }}.254
+      - "{{ local_net_prefix }}.2/24"
       nameservers:
-          search: [{{ local_domain }}]
-          addresses: [{{ local_net_prefix }}.254]
+        addresses:
+        - {{ local_net_prefix }}.254
+        search:
+        - {{ local_domain }}
+      routes:
+      - to: "default"
+        via: "{{ local_net_prefix }}.254"
