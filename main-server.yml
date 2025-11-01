@@ -46,6 +46,7 @@
         name: chrony
         enabled: yes
         state: started
+      # ignore_errors: true
 
     - name: configure chrony
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
@@ -79,6 +80,7 @@
           - containerd.io
           - docker-buildx-plugin
           - docker-compose-plugin
+      # ignore_errors: true
 
     - name: add main user to docker group
       user:
@@ -102,3 +104,4 @@
       with_items:
         - smbd
         - nmbd
+      # ignore_errors: true
