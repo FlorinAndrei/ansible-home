@@ -49,50 +49,49 @@ RAID array creation may take a long time. You do not have to wait for it to comp
 Create filesystem:
 
 ```
-root@server:~# mkfs.ext4 /dev/md0
+# mkfs.ext4 /dev/md0
 mke2fs 1.47.0 (5-Feb-2023)
-Discarding device blocks: done
+Discarding device blocks: done                            
 Creating filesystem with 468810576 4k blocks and 117202944 inodes
-Filesystem UUID: 3035c84f-7836-44bb-a4e9-0d4b7e7a0c51
-Superblock backups stored on blocks:
-        32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208,
-        4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968,
-        102400000, 214990848
+Filesystem UUID: 1ce4c216-635e-4385-afbc-a698ae88d911
+Superblock backups stored on blocks: 
+	32768, 98304, 163840, 229376, 294912, 819200, 884736, 1605632, 2654208, 
+	4096000, 7962624, 11239424, 20480000, 23887872, 71663616, 78675968, 
+	102400000, 214990848
 
-Allocating group tables: done
-Writing inode tables: done
+Allocating group tables: done                            
+Writing inode tables: done                            
 Creating journal (262144 blocks): done
 Writing superblocks and filesystem accounting information: done
-```
-
-Mount RAID array:
-
-```
-root@server:~# mkdir /storage
-root@server:~# mount /dev/md0 /storage
-root@server:~# df -h /storage
-Filesystem      Size  Used Avail Use% Mounted on
-/dev/md0        1.8T   28K  1.7T   1% /storage
 ```
 
 Put the array in mdadm.conf:
 
 ```
-root@server:~# mdadm --detail --scan | tee -a /etc/mdadm/mdadm.conf
-ARRAY /dev/md0 metadata=1.2 UUID=b5550701:d20c0911:9319e2ab:541c4595
-root@server:~# update-initramfs -u
-update-initramfs: Generating /boot/initrd.img-6.8.0-1015-raspi
-Using DTB: bcm2712-rpi-5-b.dtb
-Installing /lib/firmware/6.8.0-1015-raspi/device-tree/broadcom/bcm2712-rpi-5-b.dtb into /boot/dtbs/6.8.0-1015-raspi/./bcm2712-rpi-5-b.dtb
-Taking backup of bcm2712-rpi-5-b.dtb.
-Installing new bcm2712-rpi-5-b.dtb.
-flash-kernel: installing version 6.8.0-1015-raspi
-Taking backup of vmlinuz.
-Installing new vmlinuz.
+# mdadm --detail --scan | tee -a /etc/mdadm/mdadm.conf
+ARRAY /dev/md0 metadata=1.2 UUID=a206150f:cbeb71bd:70a1a1ec:268f022a
+# update-initramfs -u
+update-initramfs: Generating /boot/initrd.img-6.8.0-87-generic
+I: The initramfs will attempt to resume from /dev/nvme2n1p2
+I: (UUID=3abc552b-96cd-4844-b823-693b04e515fb)
+I: Set the RESUME variable to override this.
+```
+
+Identify the UUID of the RAID filesystem:
+
+```
+# ls -l /dev/disk/by-uuid/ | grep ../md0
+lrwxrwxrwx 1 root root  9 Nov  3 13:45 1ce4c216-635e-4385-afbc-a698ae88d911 -> ../../md0
 ```
 
 Mount the array permanently:
 
 ```
-root@server:~# echo '/dev/md0 /storage ext4 defaults,nofail 0 0' >> /etc/fstab
+# mkdir /storage
+# echo '/dev/disk/by-uuid/1ce4c216-635e-4385-afbc-a698ae88d911 /storage ext4 defaults,nofail 0 2' >> /etc/fstab
+# systemctl daemon-reload
+# mount /storage
+# df -h /storage
+Filesystem      Size  Used Avail Use% Mounted on
+/dev/md0        1.8T   28K  1.7T   1% /storage
 ```
