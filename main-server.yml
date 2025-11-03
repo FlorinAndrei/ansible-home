@@ -106,4 +106,5 @@
       with_items:
         - smbd
         - nmbd
+        - wsdd-server
       # ignore_errors: true
