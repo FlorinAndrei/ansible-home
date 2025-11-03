@@ -23,7 +23,7 @@
         - etc/netplan/99_config.yaml
     
     - name: configure hostname
-      shell: hostnamectl hostname server.{{ local_domain }}
+      shell: hostnamectl hostname server-new.{{ local_domain }}
     
     - name: disable cloud-init
       file: path=/etc/cloud/cloud-init.disabled state=touch
