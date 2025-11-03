@@ -94,5 +94,5 @@ Installing new vmlinuz.
 Mount the array permanently:
 
 ```
-root@server:~# echo '/dev/md0 /storage ext4 defaults,nofail,discard 0 0' >> /etc/fstab
+root@server:~# echo '/dev/md0 /storage ext4 defaults,nofail 0 0' >> /etc/fstab
 ```
