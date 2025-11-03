@@ -8,9 +8,9 @@ pip install --upgrade -r requirements.txt
 sudo reboot
 ```
 
-On the server, check `README-server.md`.
+On the server, execute `README-server.md` before continuing here.
 
-The remaining Ansible invocations assume Ansible is running locally.
+The Ansible invocations assume Ansible is running locally.
 
 Server:
 
