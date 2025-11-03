@@ -63,6 +63,11 @@
           - bind9-host
           - qrencode
 
+    - name: configure various packages
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/htoprc
+
     - name: install various scripts
       copy:
         src: templates/{{ item }}

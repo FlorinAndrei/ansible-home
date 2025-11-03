@@ -27,6 +27,11 @@
           - bind9-dnsutils
           - bind9-host
 
+    - name: configure various packages
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/htoprc
+
     - name: get system architecture
       shell: dpkg --print-architecture
       register: sys_architecture
