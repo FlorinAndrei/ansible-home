@@ -143,10 +143,12 @@
         - etc/unbound/home.local.reverse
         - etc/unbound/README.md
       notify: restart unbound
+      tags: unbound
     
     - name: touch Unbound log file
       file: path=/var/log/unbound.log state=touch owner=syslog group=adm mode=0640
       changed_when: false
+      tags: unbound
 
     - name: configure Unbound logging
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
@@ -154,6 +156,7 @@
         - etc/rsyslog.d/10-unbound.conf
         - etc/logrotate.d/unbound
       notify: restart rsyslog
+      tags: unbound
 
     - name: install DHCP server
       apt:
