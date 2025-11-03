@@ -5,20 +5,20 @@ https://www.digitalocean.com/community/tutorials/how-to-create-raid-arrays-with-
 List block devices:
 
 ```
-root@server:~# lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
-NAME          SIZE FSTYPE   TYPE MOUNTPOINT
-loop0        33.7M squashfs loop /snap/snapd/21761
-nvme0n1     953.9G          disk
-├─nvme0n1p1   512M vfat     part /boot/firmware
-└─nvme0n1p2 953.4G ext4     part /
-nvme1n1       1.7T          disk
-nvme2n1       1.7T          disk
+# lsblk -o NAME,SIZE,FSTYPE,TYPE,MOUNTPOINT
+NAME          SIZE FSTYPE TYPE MOUNTPOIN
+nvme0n1       1.7T        disk 
+nvme1n1       1.7T        disk 
+nvme2n1     931.5G        disk 
+├─nvme2n1p1     1G vfat   part /boot/efi
+├─nvme2n1p2    50G swap   part [SWAP]
+└─nvme2n1p3 880.5G ext4   part /
 ```
 
 Create RAID array:
 
 ```
-root@server:~# mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/nvme1n1 /dev/nvme2n1
+# mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/nvme0n1 /dev/nvme1n1
 mdadm: Note: this array has metadata at the start and
     may not be suitable as a boot device.  If you plan to
     store '/boot' on this device please ensure that
@@ -31,18 +31,20 @@ mdadm: Defaulting to version 1.2 metadata
 mdadm: array /dev/md0 started.
 ```
 
-Check RAID array status (may take a long time to complete, do not wait for this step, keep going):
+Check RAID array status:
 
 ```
-root@server:~# cat /proc/mdstat
-Personalities : [raid0] [raid1] [raid6] [raid5] [raid4] [raid10]
-md0 : active raid1 nvme2n1[1] nvme1n1[0]
+# cat /proc/mdstat
+Personalities : [raid0] [raid1] [raid6] [raid5] [raid4] [raid10] 
+md0 : active raid1 nvme1n1[1] nvme0n1[0]
       1875242304 blocks super 1.2 [2/2] [UU]
-      [>....................]  resync =  0.0% (991040/1875242304) finish=12790.8min speed=2441K/sec
+      [>....................]  resync =  0.5% (10803840/1875242304) finish=150.7min speed=206118K/sec
       bitmap: 14/14 pages [56KB], 65536KB chunk
 
 unused devices: <none>
 ```
+
+RAID array creation may take a long time. You do not have to wait for it to complete. If you wish, you can simply keep going.
 
 Create filesystem:
 
