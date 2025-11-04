@@ -66,3 +66,9 @@ Check CPU fan:
 ```
 cat /sys/devices/platform/cooling_fan/hwmon/*/fan1_input
 ```
+
+To allow Windows 11 systems to connect to Samba, run PowerShell as Administrator, and run:
+
+```
+Set-SmbClientConfiguration -EnableInsecureGuestLogons $true -Force
+```
