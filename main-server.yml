@@ -8,6 +8,21 @@
       name: chrony
       state: restarted
 
+  - name: restart smbd
+    service:
+      name: smbd
+      state: restarted
+
+  - name: restart nmbd
+    service:
+      name: nmbd
+      state: restarted
+
+  - name: restart wsdd-server
+    service:
+      name: wsdd-server
+      state: restarted
+
   tasks:
     - name: install various packages
       apt:
@@ -100,6 +115,7 @@
           - samba
           - wsdd
           - wsdd-server
+      tags: samba
 
     - name: make sure Samba services are enabled and running
       service:
@@ -110,3 +126,23 @@
         - smbd
         - nmbd
         - wsdd-server
+      tags: samba
+
+    - name: create media directory for Samba
+      file:
+        path: /storage/media
+        state: directory
+        owner: root
+        group: root
+        mode: '0755'
+      tags: samba
+
+    - name: configure Samba
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/samba/smb.conf
+      notify:
+        - restart smbd
+        - restart nmbd
+        - restart wsdd-server
+      tags: samba
