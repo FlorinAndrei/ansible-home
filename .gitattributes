@@ -1,0 +1,3 @@
+# Mark YAML files as YAML
+*.yml linguist-language=YAML
+*.yaml linguist-language=YAML
