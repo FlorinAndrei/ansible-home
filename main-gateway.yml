@@ -39,6 +39,20 @@
       name: wg-quick@wg0
       state: restarted
 
+  - name: restart smbd
+    service:
+      name: smbd
+      state: restarted
+
+  - name: restart nmbd
+    service:
+      name: nmbd
+      state: restarted
+
+  - name: restart wsdd-server
+    service:
+      name: wsdd-server
+      state: restarted
 
   tasks:
     - name: enable ip forwarding
@@ -225,3 +239,33 @@
       with_items:
         - etc/chrony/conf.d/allow.conf
       notify: restart chrony
+
+    - name: install Samba
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - samba
+          - wsdd
+          - wsdd-server
+      tags: samba
+
+    - name: make sure Samba services are enabled and running
+      service:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - smbd
+        - nmbd
+        - wsdd-server
+      tags: samba
+
+    - name: configure Samba
+      template: src=templates/etc/samba/smb.conf.gateway dest=/etc/samba/smb.conf owner=root group=root mode=0644
+      notify:
+        - restart smbd
+        - restart nmbd
+        - restart wsdd-server
+      tags: samba
