@@ -48,11 +48,8 @@
    bind interfaces only = no
 
    lm announce = yes
-   os level = 255
-   domain master = yes
-   preferred master = yes
    remote announce = {{ local_net_prefix }}.255/WORKGROUP
-   wins support = yes
+   wins server = {{ local_net_prefix }}.254
 
 
 
