@@ -148,9 +148,7 @@
       tags: samba
 
     - name: configure Samba
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/samba/smb.conf
+      template: src=templates/etc/samba/smb.conf.server dest=/etc/samba/smb.conf owner=root group=root mode=0644
       notify:
         - restart smbd
         - restart nmbd
