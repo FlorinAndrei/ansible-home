@@ -23,6 +23,11 @@
       name: wsdd-server
       state: restarted
 
+  - name: restart apache2
+    service:
+      name: apache2
+      state: restarted
+
   tasks:
     - name: install various packages
       apt:
@@ -146,3 +151,33 @@
         - restart nmbd
         - restart wsdd-server
       tags: samba
+
+    - name: install Apache
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - apache2
+      tags: apache
+
+    - name: make sure Apache services are enabled and running
+      service:
+        name: "{{ item }}"
+        enabled: yes
+        state: started
+      with_items:
+        - apache2
+      tags: apache
+
+    - name: remove 000-default.conf
+      file: path=/etc/apache2/sites-enabled/000-default.conf state=absent
+      tags: apache
+
+    - name: configure Apache
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/apache2/ports.conf
+        - etc/apache2/sites-enabled/000-default-custom.conf
+      notify: restart apache2
+      tags: apache
