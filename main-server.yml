@@ -184,6 +184,7 @@
       with_items:
         - etc/apache2/ports.conf
         - etc/apache2/sites-enabled/000-default-custom.conf
+        - var/www/html/favicon.ico
       notify: restart apache2
       tags: apache
 
