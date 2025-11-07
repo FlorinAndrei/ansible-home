@@ -1,6 +1,6 @@
 $TTL	60
 @	IN	SOA	localhost. root.localhost. (
-		 2025110200		; Serial
+		 2025110600		; Serial
 			     1h		; Refresh
 			    30m		; Retry
 			     1w		; Expire
@@ -11,5 +11,6 @@ $TTL	60
 1	IN	PTR	server.{{ local_domain }}.
 2	IN	PTR	server-new.{{ local_domain }}.
 4	IN	PTR	printer-hp.{{ local_domain }}.
+10	IN	PTR	spark.{{ local_domain }}.
 20	IN	PTR	media.{{ local_domain }}.
 254	IN	PTR	gateway.{{ local_domain }}.
