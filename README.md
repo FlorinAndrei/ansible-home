@@ -9,9 +9,7 @@ Update the systems and install the repository dependencies:
 sudo apt-get update
 sudo apt-get full-upgrade
 sudo apt-get install python3-pip python3-venv git
-python3 -m venv .venv
-source .venv/bin/activate
-pip install --upgrade -r requirements.txt
+bash install.sh
 sudo reboot
 ```
 
