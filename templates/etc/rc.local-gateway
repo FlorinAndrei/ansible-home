@@ -1,0 +1,8 @@
+#!/bin/bash
+
+# this folder is created manually, not part of Ansible
+pushd /opt/node_exporter
+/usr/bin/screen -S node_exporter -dm ./node_exporter
+popd
+
+exit 0
