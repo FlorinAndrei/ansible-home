@@ -53,6 +53,7 @@
           - bind9-host
           - dos2unix
           - apt-transport-https
+          - gnupg
 
     - name: configure various packages
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
