@@ -37,18 +37,20 @@ Server and gateway:
 reboot
 ```
 
+The next invocations assume Ansible is running remotely. The new inventory files must be created manually, they are not in the repo.
+
 Server:
 
 ```
-ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-server.yml --check --diff
-ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-server.yml
+ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml --check --diff
+ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml
 ```
 
 Gateway:
 
 ```
-ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
-ansible-playbook -i inventory --extra-vars "@extra-vars.yml" main-gateway.yml
+ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
+ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml
 ```
 
 Gateway:
