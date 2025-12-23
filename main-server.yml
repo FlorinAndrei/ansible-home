@@ -51,6 +51,7 @@
           - lm-sensors
           - bind9-dnsutils
           - bind9-host
+          - dos2unix
 
     - name: configure various packages
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
