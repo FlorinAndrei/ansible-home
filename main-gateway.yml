@@ -181,6 +181,26 @@
       tags: unbound
 
   post_tasks:
+    - name: install chrony (also uninstalls systemd-timesyncd)
+      apt:
+        name: "{{ packages }}"
+        state: present
+      vars:
+        packages:
+          - chrony
+
+    - name: make sure chrony is enabled and running
+      service:
+        name: chrony
+        enabled: yes
+        state: started
+
+    - name: configure chrony
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/chrony/conf.d/allow.conf
+      notify: restart chrony
+
     - name: install DHCP server
       apt:
         name: "{{ packages }}"
@@ -223,26 +243,6 @@
         - etc/logrotate.d/dhcpd
       notify: restart rsyslog
       tags: dhcp
-
-    - name: install chrony (also uninstalls systemd-timesyncd)
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - chrony
-
-    - name: make sure chrony is enabled and running
-      service:
-        name: chrony
-        enabled: yes
-        state: started
-
-    - name: configure chrony
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/chrony/conf.d/allow.conf
-      notify: restart chrony
 
     - name: install Samba
       apt:
