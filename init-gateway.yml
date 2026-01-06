@@ -2,7 +2,7 @@
 - hosts: all
   become: yes
 
-  tasks:
+  pre_tasks:
     - name: install Linux headers
       apt:
         name: "{{ packages }}"
@@ -74,6 +74,7 @@
         enabled: yes
         state: restarted
 
+  post_tasks:
     - name: configure networking
       template: src=templates/{{ item }}.gateway dest=/{{ item }} owner=root group=root mode=0644
       with_items:
