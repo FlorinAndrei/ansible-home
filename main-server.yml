@@ -145,9 +145,9 @@
       file:
         path: /storage/media
         state: directory
-        owner: root
-        group: root
-        mode: '0755'
+        owner: "{{ main_user }}"
+        group: "{{ main_user }}"
+        mode: '0775'
       tags: samba
 
     - name: configure Samba
