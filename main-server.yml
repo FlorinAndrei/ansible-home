@@ -33,7 +33,7 @@
       name: nginx
       state: restarted
 
-  tasks:
+  pre_tasks:
     - name: install various packages
       apt:
         name: "{{ packages }}"
@@ -66,6 +66,7 @@
       check_mode: false
       changed_when: false
 
+  post_tasks:
     - name: install chrony (also uninstalls systemd-timesyncd)
       apt:
         name: "{{ packages }}"
