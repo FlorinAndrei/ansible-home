@@ -1,0 +1,22 @@
+---
+- name: install dovecot
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - dovecot-core
+      - dovecot-imapd
+      - dovecot-managesieved
+      - dovecot-sieve
+
+- name: configure dovecot
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item | regex_replace('\\.j2$', '') }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/dovecot/conf.d/10-auth.conf.j2
+  notify: restart dovecot

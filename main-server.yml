@@ -67,6 +67,9 @@
       chrony_mode: 'ntp_client'
     tags: chrony
 
+  - role: dovecot
+    tags: dovecot
+
   post_tasks:
     - name: install Docker repo GPG key
       get_url:
