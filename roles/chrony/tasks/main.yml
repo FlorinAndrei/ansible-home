@@ -1,0 +1,39 @@
+---
+- name: install chrony (also uninstalls systemd-timesyncd)
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - chrony
+
+- name: make sure chrony is enabled and running
+  service:
+    name: chrony
+    enabled: yes
+    state: started
+
+- name: configure chrony for NTP server mode (gateway)
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item | regex_replace('\\.j2$', '') }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/chrony/conf.d/allow.conf.j2
+  notify: restart chrony
+  when: chrony_mode == 'ntp_server'
+
+- name: configure chrony for NTP client mode (server)
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item | regex_replace('\\.j2$', '') }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/chrony/sources.d/local-ntp-server.sources.j2
+    - etc/chrony/chrony.conf.j2
+  notify: restart chrony
+  when: chrony_mode == 'ntp_client'

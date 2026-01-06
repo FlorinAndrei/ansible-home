@@ -1,0 +1,7 @@
+---
+# Chrony role default variables
+
+# Mode can be 'ntp_server' or 'ntp_client'
+# ntp_server: Acts as NTP server for the local network (gateway)
+# ntp_client: Acts as NTP client syncing from gateway (server)
+chrony_mode: 'ntp_client'
