@@ -54,7 +54,7 @@
       name: wsdd-server
       state: restarted
 
-  tasks:
+  pre_tasks:
     - name: enable ip forwarding
       sysctl: name=net.ipv4.ip_forward value=1 sysctl_file=/etc/sysctl.d/20-ip-forward.conf sysctl_set=yes
 
@@ -180,6 +180,7 @@
       notify: restart rsyslog
       tags: unbound
 
+  post_tasks:
     - name: install DHCP server
       apt:
         name: "{{ packages }}"
