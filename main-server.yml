@@ -72,11 +72,21 @@
       changed_when: false
       tags: docker
 
-    - name: install Docker repo GPG key
+    - name: download Docker repo GPG key
       get_url:
         url: https://download.docker.com/linux/ubuntu/gpg
+        dest: /tmp/docker.asc
+        mode: '0644'
+      changed_when: false
+      check_mode: false
+      tags: docker
+
+    - name: install Docker repo GPG key
+      copy:
+        src: /tmp/docker.asc
         dest: /etc/apt/keyrings/docker.asc
-        mode: a+r
+        remote_src: yes
+        mode: '0644'
       tags: docker
 
     - name: add Docker repo
