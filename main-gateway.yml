@@ -9,11 +9,6 @@
       name: unbound
       state: restarted
 
-  - name: restart isc-dhcp-server
-    service:
-      name: isc-dhcp-server
-      state: restarted
-
   - name: restart nftables
     service:
       name: nftables
@@ -181,50 +176,10 @@
       chrony_mode: 'ntp_server'
     tags: chrony
 
+  - role: dhcp
+    tags: dhcp
+
   post_tasks:
-    - name: install DHCP server
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - isc-dhcp-server
-      tags: dhcp
-
-    - name: enable isc-dhcp-server
-      service:
-        name: isc-dhcp-server
-        enabled: yes
-        state: started
-      tags: dhcp
-
-    - name: disable isc-dhcp-server6
-      service:
-        name: isc-dhcp-server6
-        enabled: no
-        state: stopped
-      tags: dhcp
-
-    - name: configure DHCP server
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/dhcp/dhcpd.conf
-      notify: restart isc-dhcp-server
-      tags: dhcp
-
-    - name: touch DHCP server log file
-      file: path=/var/log/dhcpd.log state=touch owner=syslog group=adm mode=0640
-      changed_when: false
-      tags: dhcp
-
-    - name: configure DHCP server logging
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/rsyslog.d/10-dhcpd.conf
-        - etc/logrotate.d/dhcpd
-      notify: restart rsyslog
-      tags: dhcp
-
     - name: install Samba
       apt:
         name: "{{ packages }}"
