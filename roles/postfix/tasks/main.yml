@@ -1,0 +1,14 @@
+---
+- name: install postfix
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - postfix
+
+- name: make sure postfix is enabled and running
+  service:
+    name: postfix
+    enabled: yes
+    state: started

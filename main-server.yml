@@ -63,6 +63,9 @@
 
   - role: dovecot
     tags: dovecot
+  
+  - role: postfix
+    tags: postfix
 
   post_tasks:
     - name: get system architecture
