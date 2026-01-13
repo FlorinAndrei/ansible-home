@@ -9,6 +9,7 @@
       - dovecot-imapd
       - dovecot-managesieved
       - dovecot-sieve
+      - dovecot-lmtpd
 
 - name: configure dovecot
   template:
