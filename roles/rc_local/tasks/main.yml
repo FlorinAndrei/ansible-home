@@ -1,0 +1,20 @@
+---
+- name: create rc.local script for gateway
+  template:
+    src: etc/rc.local.gateway.j2
+    dest: /etc/rc.local
+    owner: root
+    group: root
+    mode: 0755
+  notify: reload systemd for rc-local
+  when: rc_local_mode == 'gateway'
+
+- name: create rc.local script for server
+  template:
+    src: etc/rc.local.server.j2
+    dest: /etc/rc.local
+    owner: root
+    group: root
+    mode: 0755
+  notify: reload systemd for rc-local
+  when: rc_local_mode == 'server'

@@ -1,0 +1,6 @@
+---
+# rc_local role default variables
+
+# Mode determines which rc.local template to use
+# Currently only 'gateway' is implemented; 'server' can be added in the future
+rc_local_mode: 'gateway'

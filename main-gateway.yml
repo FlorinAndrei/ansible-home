@@ -169,13 +169,7 @@
       samba_mode: 'gateway'
     tags: samba
 
-  post_tasks:
-    - name: create rc.local script
-      template: src=templates/etc/rc.local-gateway dest=/etc/rc.local owner=root group=root mode=0755
-      tags: rc.local
-
-    - name: enable the rc-local service
-      service:
-        name: rc-local
-        enabled: yes
-      tags: rc.local
+  - role: rc_local
+    vars:
+      rc_local_mode: 'gateway'
+    tags: rc.local

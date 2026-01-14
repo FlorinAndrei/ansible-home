@@ -1,0 +1,7 @@
+---
+# This handler is not normally needed - systemd-rc-local-generator runs at boot
+# and will detect /etc/rc.local automatically. This is here for edge cases where
+# rc.local is created or modified on a running system without a subsequent reboot.
+- name: reload systemd for rc-local
+  systemd:
+    daemon_reload: yes
