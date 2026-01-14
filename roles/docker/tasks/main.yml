@@ -1,0 +1,47 @@
+---
+- name: get system architecture
+  shell: dpkg --print-architecture
+  register: sys_architecture
+  check_mode: false
+  changed_when: false
+
+- name: download Docker repo GPG key
+  get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /tmp/docker.asc
+    mode: '0644'
+  changed_when: false
+  check_mode: false
+
+- name: install Docker repo GPG key
+  copy:
+    src: /tmp/docker.asc
+    dest: /etc/apt/keyrings/docker.asc
+    remote_src: yes
+    mode: '0644'
+
+- name: add Docker repo
+  apt_repository:
+    repo: "deb [arch={{ sys_architecture.stdout }} signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    filename: docker
+    state: present
+    update_cache: true
+
+- name: install Docker
+  apt:
+    name: "{{ packages }}"
+    state: present
+    update_cache: no
+  vars:
+    packages:
+      - docker-ce
+      - docker-ce-cli
+      - containerd.io
+      - docker-buildx-plugin
+      - docker-compose-plugin
+
+- name: add main user to docker group
+  user:
+    name: "{{ main_user }}"
+    groups: docker
+    append: yes
