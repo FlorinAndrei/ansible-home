@@ -1,0 +1,55 @@
+---
+- name: install Samba
+  apt:
+    name: "{{ packages }}"
+    state: present
+  vars:
+    packages:
+      - samba
+      - wsdd
+      - wsdd-server
+
+- name: make sure Samba services are enabled and running
+  service:
+    name: "{{ item }}"
+    enabled: yes
+    state: started
+  with_items:
+    - smbd
+    - nmbd
+    - wsdd-server
+
+- name: create media directory for Samba (server only)
+  file:
+    path: /storage/media
+    state: directory
+    owner: "{{ main_user }}"
+    group: "{{ main_user }}"
+    mode: '0775'
+  when: samba_mode == 'server'
+
+- name: configure Samba for gateway mode
+  template:
+    src: etc/samba/smb.conf.gateway.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart smbd
+    - restart nmbd
+    - restart wsdd-server
+  when: samba_mode == 'gateway'
+
+- name: configure Samba for server mode
+  template:
+    src: etc/samba/smb.conf.server.j2
+    dest: /etc/samba/smb.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify:
+    - restart smbd
+    - restart nmbd
+    - restart wsdd-server
+  when: samba_mode == 'server'

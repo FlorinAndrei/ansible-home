@@ -1,0 +1,7 @@
+---
+# Samba role default variables
+
+# Mode can be 'gateway' or 'server'
+# gateway: Acts as WINS server and domain master for the network
+# server: Acts as WINS client, provides media shares
+samba_mode: 'server'

@@ -1,0 +1,15 @@
+---
+- name: restart smbd
+  service:
+    name: smbd
+    state: restarted
+
+- name: restart nmbd
+  service:
+    name: nmbd
+    state: restarted
+
+- name: restart wsdd-server
+  service:
+    name: wsdd-server
+    state: restarted

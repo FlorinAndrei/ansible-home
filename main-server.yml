@@ -3,21 +3,6 @@
   become: yes
 
   handlers:
-  - name: restart smbd
-    service:
-      name: smbd
-      state: restarted
-
-  - name: restart nmbd
-    service:
-      name: nmbd
-      state: restarted
-
-  - name: restart wsdd-server
-    service:
-      name: wsdd-server
-      state: restarted
-
   - name: restart apache2
     service:
       name: apache2
@@ -70,46 +55,12 @@
   - role: docker
     tags: docker
 
+  - role: samba
+    vars:
+      samba_mode: 'server'
+    tags: samba
+
   post_tasks:
-    - name: install Samba
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - samba
-          - wsdd
-          - wsdd-server
-      tags: samba
-
-    - name: make sure Samba services are enabled and running
-      service:
-        name: "{{ item }}"
-        enabled: yes
-        state: started
-      with_items:
-        - smbd
-        - nmbd
-        - wsdd-server
-      tags: samba
-
-    - name: create media directory for Samba
-      file:
-        path: /storage/media
-        state: directory
-        owner: "{{ main_user }}"
-        group: "{{ main_user }}"
-        mode: '0775'
-      tags: samba
-
-    - name: configure Samba
-      template: src=templates/etc/samba/smb.conf.server dest=/etc/samba/smb.conf owner=root group=root mode=0644
-      notify:
-        - restart smbd
-        - restart nmbd
-        - restart wsdd-server
-      tags: samba
-
     - name: install Apache
       apt:
         name: "{{ packages }}"
