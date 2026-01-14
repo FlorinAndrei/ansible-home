@@ -88,8 +88,11 @@
       with_items:
         - etc/apache2/ports.conf
         - etc/apache2/sites-enabled/000-default-custom.conf
-        - var/www/html/favicon.ico
       notify: restart apache2
+      tags: apache
+
+    - name: install Apache favicon
+      copy: src=templates/var/www/html/favicon.ico dest=/var/www/html/favicon.ico owner=root group=root mode=0644
       tags: apache
 
     - name: install Nginx
