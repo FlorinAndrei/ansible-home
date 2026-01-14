@@ -1,6 +1,8 @@
-# RAID
+# Server RAID Configuration
 
 https://www.digitalocean.com/community/tutorials/how-to-create-raid-arrays-with-mdadm-on-ubuntu
+
+It is assumed the server has two extra SSD drives that will be used for storage.
 
 List block devices:
 

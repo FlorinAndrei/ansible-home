@@ -1,7 +1,11 @@
+# ansible-home
+
 The document assumes:
 
 - the `gateway` system is a Raspberry Pi 5 with a [Pineboards HatDrive! NET 1G](https://thepihut.com/blogs/raspberry-pi-tutorials/pineboards-hatdrive-net-1g-documentation) adapter (NVMe + 1 GB Ethernet), the OS is installed on NVMe, and both Ethernet adapters (original and add-on) are used in a router configuration
 - the `server` system is a [Beelink ME mini](https://www.bee-link.com/products/beelink-me-mini-n150) with an Intel N150 CPU, the original 1 TB SSD drive used for the OS, and two additional SSD drives installed for storage
+
+## Initial Setup
 
 Update the systems and install the repository dependencies:
 
@@ -13,9 +17,13 @@ bash install.sh
 sudo reboot
 ```
 
-On the server, execute `README-server.md` before continuing here.
+STOP! On the server, follow [README-server.md](README-server.md) before continuing.
 
-The Ansible invocations assume Ansible is running locally.
+## Local Ansible Runs, Prep The Systems Initially
+
+These Ansible invocations assume Ansible is running locally.
+
+These playbooks should only be applied once, after the initial setup.
 
 Server:
 
@@ -37,7 +45,11 @@ Server and gateway:
 reboot
 ```
 
+## Main Ansible Playbooks, Routine Maintenance
+
 The next invocations assume Ansible is running remotely. The new inventory files must be created manually, they are not in the repo.
+
+These playbooks are meant for regular system maintenance and configuration.
 
 Server:
 
@@ -52,6 +64,8 @@ Gateway:
 ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
 ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml
 ```
+
+## Extra
 
 Gateway:
 
