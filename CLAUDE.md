@@ -1,6 +1,6 @@
 # Ansible Home Network Configuration
 
-This repository contains Ansible code for configuring a home network. Two systems are managed:
+This repository contains Ansible code for configuring a home network. Systems currently managed:
 
 - **gateway**: Local Internet router, DNS server, DHCP server, NTP server, VPN endpoint
 - **server**: Runs local services (mail, file sharing, web servers, Docker containers)
