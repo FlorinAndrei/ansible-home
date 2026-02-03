@@ -12,3 +12,14 @@
     name: postfix
     enabled: yes
     state: started
+
+- name: configure postfix
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item | regex_replace('\\.j2$', '') }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/postfix/main.cf.j2
+  notify: restart postfix
