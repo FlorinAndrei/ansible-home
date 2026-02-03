@@ -49,3 +49,9 @@ inet_protocols = all
 # Dovecot
 mailbox_transport = lmtp:unix:private/dovecot-lmtp
 smtpd_recipient_restrictions = reject_unverified_recipient
+
+smtpd_sasl_auth_enable = yes
+broken_sasl_auth_clients = yes
+smtpd_sasl_type = dovecot
+smtpd_sasl_path = private/dovecot-auth
+smtpd_sasl_security_options = noanonymous
