@@ -30,15 +30,15 @@ These playbooks should only be applied once, after the initial setup.
 Server:
 
 ```
-ansible-playbook -i inventory -K --extra-vars "@extra-vars.yml" init-server.yml --check --diff
-ansible-playbook -i inventory -K --extra-vars "@extra-vars.yml" init-server.yml
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-server.yml --check --diff
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-server.yml
 ```
 
 Gateway:
 
 ```
-ansible-playbook -i inventory -K --extra-vars "@extra-vars.yml" init-gateway.yml --check --diff
-ansible-playbook -i inventory -K --extra-vars "@extra-vars.yml" init-gateway.yml
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-gateway.yml --check --diff
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-gateway.yml
 ```
 
 Server and gateway:
@@ -49,22 +49,22 @@ reboot
 
 ## Main Ansible Playbooks, Routine Maintenance
 
-The next invocations assume Ansible is running remotely. The new inventory files must be created manually, they are not in the repo.
+The next invocations assume Ansible is running remotely, using the shared `inventory.yml` file.
 
 These playbooks are meant for regular system maintenance and configuration.
 
 Server:
 
 ```
-ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml --check --diff
-ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml --check --diff
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml
 ```
 
 Gateway:
 
 ```
-ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
-ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml
 ```
 
 ## Extra

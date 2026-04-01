@@ -11,13 +11,18 @@ This repository contains Ansible code for configuring a home network. Systems cu
 
 Each system has two playbooks:
 
-| System  | Init Playbook       | Main Playbook       | Inventory           |
-|---------|---------------------|---------------------|---------------------|
-| gateway | `init-gateway.yml`  | `main-gateway.yml`  | `inventory-gateway` |
-| server  | `init-server.yml`   | `main-server.yml`   | `inventory-server`  |
+| System  | Init Playbook       | Main Playbook       |
+|---------|---------------------|---------------------|
+| gateway | `init-gateway.yml`  | `main-gateway.yml`  |
+| server  | `init-server.yml`   | `main-server.yml`   |
 
-- **init playbooks**: Minimal initial configuration (networking, hostname, kernel modules, sudo). Run once on fresh systems.
-- **main playbooks**: Full configuration with all services and roles. Used for ongoing management.
+- **init playbooks**: Minimal initial configuration (networking, hostname, kernel modules, sudo). Run once on fresh systems locally, using `inventory-localhost`.
+- **main playbooks**: Full configuration with all services and roles. Used for ongoing management remotely, using `inventory.yml`.
+
+### Inventory Files
+
+- **`inventory-localhost`**: Used by init playbooks. Targets `127.0.0.1` with a local connection, for bootstrapping before DNS is available.
+- **`inventory.yml`**: Used by main playbooks. Contains `gateway` and `server` groups with short hostnames resolved via DNS.
 
 ### Roles
 
@@ -48,8 +53,6 @@ Sensitive and site-specific data is stored in `extra-vars.yml`, which is git-ign
 - **User configuration**: `main_user`
 - **Port forwarding rules**: `server_ports_forwarded_tcp`, `sshd_port_extra`
 - **WireGuard VPN**: Server keys, client configurations (names, keys, allowed IPs)
-
-The inventory files (`inventory-gateway`, `inventory-server`) contain host IP addresses and are also git-ignored.
 
 All playbook runs require passing the extra-vars file:
 ```bash
@@ -84,10 +87,10 @@ Always test changes with `--check --diff` before applying:
 
 ```bash
 # Test gateway
-ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
 
 # Test server
-ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml --check --diff
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml --check --diff
 ```
 
 ### Focused Testing with Tags
@@ -96,10 +99,10 @@ Use `--tags` to test specific parts of the configuration:
 
 ```bash
 # Test only the samba role on gateway
-ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff --tags samba
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff --tags samba
 
 # Test only chrony on server
-ansible-playbook -i inventory-server --extra-vars "@extra-vars.yml" main-server.yml --check --diff --tags chrony
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml --check --diff --tags chrony
 ```
 
 Available tags vary by playbook. Common tags include:
@@ -111,7 +114,7 @@ Available tags vary by playbook. Common tags include:
 For debugging, use `-v`, `-vv`, or `-vvv` for increasing verbosity:
 
 ```bash
-ansible-playbook -i inventory-gateway --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff --tags samba -vvv
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff --tags samba -vvv
 ```
 
 ## Role Development Guidelines
