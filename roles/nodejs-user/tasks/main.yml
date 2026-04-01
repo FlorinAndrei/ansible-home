@@ -1,0 +1,68 @@
+---
+# Step 1 - Determine latest LTS version
+- name: fetch Node.js version index
+  uri:
+    url: https://nodejs.org/dist/index.json
+    return_content: yes
+  register: nodejs_version_index
+  check_mode: false
+
+- name: determine latest LTS version
+  set_fact:
+    nodejs_lts_version: "{{ (nodejs_version_index.json | selectattr('lts') | first).version }}"
+
+- name: derive directory name
+  set_fact:
+    nodejs_dirname: "node-{{ nodejs_lts_version }}-linux-x64"
+
+# Step 2 - Check current installation
+- name: check if nodejs symlink exists
+  stat:
+    path: "~/opt/nodejs"
+  register: nodejs_symlink
+
+- name: determine current installed version
+  set_fact:
+    nodejs_installed: "{{ nodejs_symlink.stat.exists | default(false) }}"
+    nodejs_current_version: "{{ nodejs_symlink.stat.lnk_target | default('') | basename | regex_replace('^node-(v[0-9.]+)-linux-x64$', '\\1') if (nodejs_symlink.stat.exists | default(false)) else '' }}"
+
+# Step 3 - Install if not present
+- name: create ~/opt directory
+  file:
+    path: "~/opt"
+    state: directory
+    mode: '0755'
+  when: not nodejs_installed
+
+- name: download Node.js tarball
+  get_url:
+    url: "https://nodejs.org/dist/{{ nodejs_lts_version }}/node-{{ nodejs_lts_version }}-linux-x64.tar.xz"
+    dest: "/tmp/{{ nodejs_dirname }}.tar.xz"
+  when: not nodejs_installed and not ansible_check_mode
+
+- name: extract Node.js tarball
+  unarchive:
+    src: "/tmp/{{ nodejs_dirname }}.tar.xz"
+    dest: "~/opt/"
+    remote_src: yes
+  when: not nodejs_installed and not ansible_check_mode
+
+- name: create nodejs symlink
+  file:
+    src: "~/opt/{{ nodejs_dirname }}"
+    dest: "~/opt/nodejs"
+    state: link
+  when: not nodejs_installed and not ansible_check_mode
+
+- name: add Node.js to PATH in ~/.profile
+  lineinfile:
+    path: "~/.profile"
+    line: 'export PATH="$HOME/opt/nodejs/bin:$PATH"'
+    create: yes
+  when: not nodejs_installed
+
+# Step 4 - Notify if outdated
+- name: notify if newer Node.js LTS is available
+  debug:
+    msg: "Node.js {{ nodejs_lts_version }} is available (currently installed: {{ nodejs_current_version }})"
+  when: nodejs_installed and nodejs_current_version != nodejs_lts_version

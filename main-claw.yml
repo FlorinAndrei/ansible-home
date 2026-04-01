@@ -23,6 +23,7 @@
           - dos2unix
           - apt-transport-https
           - gnupg
+          - xz-utils
 
     - name: configure various packages
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
@@ -37,3 +38,7 @@
 
   - role: docker
     tags: docker
+
+  - role: nodejs-user
+    become: no
+    tags: nodejs
