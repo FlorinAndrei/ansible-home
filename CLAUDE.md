@@ -4,6 +4,7 @@ This repository contains Ansible code for configuring a home network. Systems cu
 
 - **gateway**: Local Internet router, DNS server, DHCP server, NTP server, VPN endpoint
 - **server**: Runs local services (mail, file sharing, web servers, Docker containers)
+- **claw**: Runs containers (Docker) with NTP client
 
 ## Repository Structure
 
@@ -15,6 +16,7 @@ Each system has two playbooks:
 |---------|---------------------|---------------------|
 | gateway | `init-gateway.yml`  | `main-gateway.yml`  |
 | server  | `init-server.yml`   | `main-server.yml`   |
+| claw    | `init-claw.yml`     | `main-claw.yml`     |
 
 - **init playbooks**: Minimal initial configuration (networking, hostname, kernel modules, sudo). Run once on fresh systems locally, using `inventory-localhost`.
 - **main playbooks**: Full configuration with all services and roles. Used for ongoing management remotely, using `inventory.yml`.
@@ -22,7 +24,7 @@ Each system has two playbooks:
 ### Inventory Files
 
 - **`inventory-localhost`**: Used by init playbooks. Targets `127.0.0.1` with a local connection, for bootstrapping before DNS is available.
-- **`inventory.yml`**: Used by main playbooks. Contains `gateway` and `server` groups with short hostnames resolved via DNS.
+- **`inventory.yml`**: Used by main playbooks. Contains `gateway`, `server`, and `claw` hosts with short hostnames resolved via DNS.
 
 ### Roles
 
@@ -30,13 +32,13 @@ Roles are in the `roles/` directory. Many roles support a mode variable to handl
 
 | Role      | Used By         | Mode Variable    | Modes                           | Description                           |
 |-----------|-----------------|------------------|---------------------------------|---------------------------------------|
-| chrony    | gateway, server | `chrony_mode`    | `ntp_server`, `ntp_client`      | NTP time synchronization              |
+| chrony    | gateway, server, claw | `chrony_mode`    | `ntp_server`, `ntp_client`      | NTP time synchronization              |
 | dhcp      | gateway         | -                | -                               | DHCP server (isc-dhcp-server)         |
 | samba     | gateway, server | `samba_mode`     | `gateway`, `server`             | File sharing (WINS, SMB)              |
 | rc_local  | gateway         | `rc_local_mode`  | `gateway` (server planned)      | Startup scripts via /etc/rc.local     |
 | dovecot   | server          | -                | -                               | IMAP mail server                      |
 | postfix   | server          | -                | -                               | SMTP mail server                      |
-| docker    | server          | -                | -                               | Docker container runtime              |
+| docker    | server, claw    | -                | -                               | Docker container runtime              |
 
 ### Templates
 
@@ -81,6 +83,13 @@ The server (`main-server.yml`) provides:
 - **File sharing**: Samba (WINS client, media shares)
 - **Web**: Apache + Nginx
 
+## Claw Services
+
+The claw host (`main-claw.yml`) provides:
+
+- **NTP**: Chrony (client mode, syncs from gateway)
+- **Containers**: Docker
+
 ## Testing
 
 Always test changes with `--check --diff` before applying:
@@ -91,6 +100,9 @@ ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.ym
 
 # Test server
 ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml --check --diff
+
+# Test claw
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-claw.yml --check --diff
 ```
 
 ### Focused Testing with Tags
@@ -108,6 +120,7 @@ ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-server.yml
 Available tags vary by playbook. Common tags include:
 - `chrony`, `dhcp`, `samba`, `rc.local`, `unbound`, `ip_forwarding` (gateway)
 - `chrony`, `dovecot`, `postfix`, `docker`, `samba`, `apache`, `nginx` (server)
+- `chrony`, `docker` (claw)
 
 ### Verbose Output
 

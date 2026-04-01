@@ -1,0 +1,10 @@
+---
+- hosts: 127.0.0.1
+  become: yes
+
+  tasks:
+    - name: enable passwordless sudo
+      template: src=templates/etc/sudoers.d/user dest=/etc/sudoers.d/{{ main_user }} owner=root group=root mode=0644
+
+    - name: configure hostname
+      shell: hostnamectl hostname claw.{{ local_domain }}

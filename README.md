@@ -4,6 +4,7 @@ The document assumes:
 
 - the `gateway` system is a [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) with a [Pineboards HatDrive! NET 1G](https://thepihut.com/blogs/raspberry-pi-tutorials/pineboards-hatdrive-net-1g-documentation) adapter (NVMe + 1 GB Ethernet), the OS is installed on NVMe, and both Ethernet adapters (original and add-on) are used in a router configuration
 - the `server` system is a [Beelink ME mini](https://www.bee-link.com/products/beelink-me-mini-n150) with an Intel N150 CPU, the original 1 TB SSD drive used for the OS, and two additional SSD drives installed for storage
+- the `claw` system runs containers (Docker) with NTP client
 
 All systems run Ubuntu 24.04 LTS.
 
@@ -41,7 +42,14 @@ ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-g
 ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-gateway.yml
 ```
 
-Server and gateway:
+Claw:
+
+```
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-claw.yml --check --diff
+ansible-playbook -i inventory-localhost -K --extra-vars "@extra-vars.yml" init-claw.yml
+```
+
+All systems:
 
 ```
 reboot
@@ -65,6 +73,13 @@ Gateway:
 ```
 ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml --check --diff
 ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-gateway.yml
+```
+
+Claw:
+
+```
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-claw.yml --check --diff
+ansible-playbook -i inventory.yml --extra-vars "@extra-vars.yml" main-claw.yml
 ```
 
 ## Extra

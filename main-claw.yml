@@ -1,0 +1,39 @@
+---
+- hosts: claw
+  become: yes
+
+  pre_tasks:
+    - name: install various packages
+      apt:
+        name: "{{ packages }}"
+        state: present
+        update_cache: yes
+      vars:
+        packages:
+          - vim
+          - net-tools
+          - mc
+          - nmap
+          - iotop
+          - iftop
+          - stress-ng
+          - lm-sensors
+          - bind9-dnsutils
+          - bind9-host
+          - dos2unix
+          - apt-transport-https
+          - gnupg
+
+    - name: configure various packages
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/htoprc
+
+  roles:
+  - role: chrony
+    vars:
+      chrony_mode: 'ntp_client'
+    tags: chrony
+
+  - role: docker
+    tags: docker
