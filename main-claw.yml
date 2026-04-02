@@ -13,6 +13,9 @@
           - vim
           - net-tools
           - mc
+          - htop
+          - curl
+          - ripgrep
           - nmap
           - iotop
           - iftop
@@ -24,6 +27,8 @@
           - apt-transport-https
           - gnupg
           - xz-utils
+          - build-essential
+      tags: packages
 
     - name: configure various packages
       template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
