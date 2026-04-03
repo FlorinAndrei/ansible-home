@@ -26,6 +26,7 @@
     filename: docker
     state: present
     update_cache: true
+  register: docker_repo
 
 - name: install Docker
   apt:
@@ -39,9 +40,11 @@
       - containerd.io
       - docker-buildx-plugin
       - docker-compose-plugin
+  when: not (ansible_check_mode and docker_repo is changed)
 
 - name: add main user to docker group
   user:
     name: "{{ main_user }}"
     groups: docker
     append: yes
+  when: not (ansible_check_mode and docker_repo is changed)
