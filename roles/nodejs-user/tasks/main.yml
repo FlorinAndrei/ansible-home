@@ -18,7 +18,7 @@
 # Step 2 - Check current installation
 - name: check if nodejs symlink exists
   stat:
-    path: "~/opt/nodejs"
+    path: "~/opt/node"
   register: nodejs_symlink
 
 - name: determine current installed version
@@ -50,14 +50,14 @@
 - name: create nodejs symlink
   file:
     src: "~/opt/{{ nodejs_dirname }}"
-    dest: "~/opt/nodejs"
+    dest: "~/opt/node"
     state: link
   when: not nodejs_installed and not ansible_check_mode
 
 - name: add Node.js to PATH in ~/.profile
   lineinfile:
     path: "~/.profile"
-    line: 'export PATH="$HOME/opt/nodejs/bin:$PATH"'
+    line: 'export PATH="$HOME/opt/node/bin:$PATH"'
     create: yes
   when: not nodejs_installed
 
