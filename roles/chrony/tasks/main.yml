@@ -15,7 +15,7 @@
     state: started
   when: not (ansible_check_mode and chrony_install is changed)
 
-- name: configure chrony for NTP server mode (gateway)
+- name: configure chrony for NTP server mode
   template:
     src: "{{ item }}"
     dest: "/{{ item | regex_replace('\\.j2$', '') }}"
@@ -27,7 +27,7 @@
   notify: restart chrony
   when: chrony_mode == 'ntp_server'
 
-- name: configure chrony for NTP client mode (server)
+- name: configure chrony for NTP client mode
   template:
     src: "{{ item }}"
     dest: "/{{ item | regex_replace('\\.j2$', '') }}"
