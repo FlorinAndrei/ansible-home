@@ -46,6 +46,7 @@ Configuration file templates are in `templates/` (for playbook tasks) and `roles
 
 - Text configuration files use the `template` module and may have `.j2` extension
 - Binary files (e.g., favicon.ico) must use the `copy` module, not `template`
+- In templates, reference facts as `ansible_facts['fact_name']` (e.g. `ansible_facts['default_ipv4']['address']`), not the deprecated top-level `ansible_*` variables
 
 ## Secrets and Site-Specific Configuration
 
@@ -139,3 +140,55 @@ When creating new roles, follow the existing pattern:
 3. Use conditional `when:` clauses in tasks to apply mode-specific configuration
 4. Place templates in `templates/` with `.j2` extension
 5. Define handlers in `handlers/main.yml` for service restarts
+
+### Handling `--check` mode on fresh systems
+
+When a role installs a package and then uses it (service tasks, file operations that require files created by earlier tasks), `--check` mode on a fresh system will fail because earlier tasks simulate changes without actually applying them.
+
+The pattern to handle this:
+
+- Register the task whose output a later task depends on
+- Guard the dependent task with `when: not (ansible_check_mode and <registered_var> is changed)`
+
+This applies to **tasks and handlers alike**. Examples:
+
+```yaml
+# tasks/main.yml
+- name: install Foo
+  apt:
+    name: foo
+    state: present
+  register: foo_install
+
+- name: deploy Foo config
+  template:
+    src: foo.conf.j2
+    dest: /etc/foo/foo.conf
+  register: foo_conf
+  notify: reload foo
+
+# Skip if check mode and foo isn't installed yet (file won't exist on disk)
+- name: enable Foo site
+  file:
+    src: /etc/foo/sites-available/foo.conf
+    dest: /etc/foo/sites-enabled/foo.conf
+    state: link
+  when: not (ansible_check_mode and foo_conf is changed)
+
+# Skip if check mode and foo isn't installed yet (service won't exist)
+- name: make sure Foo is enabled and running
+  service:
+    name: foo
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and foo_install is changed)
+```
+
+```yaml
+# handlers/main.yml
+- name: reload foo
+  service:
+    name: foo
+    state: reloaded
+  when: not (ansible_check_mode and foo_install is changed)
+```
