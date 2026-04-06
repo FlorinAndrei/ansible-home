@@ -1,0 +1,37 @@
+---
+- name: install Nginx
+  apt:
+    name: nginx
+    state: present
+  register: nginx_install
+
+- name: disable default Nginx site
+  file:
+    path: /etc/nginx/sites-enabled/default
+    state: absent
+  notify: reload nginx
+
+- name: configure reverse proxy
+  template:
+    src: etc/nginx/sites-available/reverse-proxy.conf.j2
+    dest: /etc/nginx/sites-available/reverse-proxy.conf
+    owner: root
+    group: root
+    mode: '0644'
+  register: nginx_reverse_proxy_conf
+  notify: reload nginx
+
+- name: enable reverse proxy site
+  file:
+    src: /etc/nginx/sites-available/reverse-proxy.conf
+    dest: /etc/nginx/sites-enabled/reverse-proxy.conf
+    state: link
+  notify: reload nginx
+  when: not (ansible_check_mode and nginx_reverse_proxy_conf is changed)
+
+- name: make sure Nginx is enabled and running
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and nginx_install is changed)

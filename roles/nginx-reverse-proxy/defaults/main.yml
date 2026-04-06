@@ -1,0 +1,9 @@
+---
+# List of ports to reverse-proxy from the network interface to loopback.
+# Each item: { listen_port: N, upstream_port: M }
+nginx_reverse_proxy_ports: []
+
+# TLS support - set to true and provide cert/key paths to enable
+nginx_reverse_proxy_tls: false
+nginx_reverse_proxy_tls_cert: ''
+nginx_reverse_proxy_tls_key: ''
