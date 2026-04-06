@@ -47,3 +47,9 @@
   - role: nodejs-user
     become: no
     tags: nodejs
+
+  - role: nginx-reverse-proxy
+    vars:
+      nginx_reverse_proxy_ports:
+        - { listen_port: 18789, upstream_port: 18789 }
+    tags: nginx-proxy
