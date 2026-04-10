@@ -11,23 +11,14 @@
     state: absent
   notify: reload nginx
 
-- name: configure reverse proxy
+- name: deploy reverse proxy config
   template:
-    src: etc/nginx/sites-available/reverse-proxy.conf.j2
-    dest: /etc/nginx/sites-available/reverse-proxy.conf
+    src: "etc/nginx/sites-enabled/{{ nginx_reverse_proxy_config }}.conf.j2"
+    dest: "/etc/nginx/sites-enabled/{{ nginx_reverse_proxy_config }}.conf"
     owner: root
     group: root
     mode: '0644'
-  register: nginx_reverse_proxy_conf
   notify: reload nginx
-
-- name: enable reverse proxy site
-  file:
-    src: /etc/nginx/sites-available/reverse-proxy.conf
-    dest: /etc/nginx/sites-enabled/reverse-proxy.conf
-    state: link
-  notify: reload nginx
-  when: not (ansible_check_mode and nginx_reverse_proxy_conf is changed)
 
 - name: make sure Nginx is enabled and running
   service:

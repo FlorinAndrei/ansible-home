@@ -50,6 +50,5 @@
 
   - role: nginx-reverse-proxy
     vars:
-      nginx_reverse_proxy_ports:
-        - { listen_port: 18789, upstream_port: 18789 }
+      nginx_reverse_proxy_config: claw-reverse-proxy
     tags: nginx-proxy
