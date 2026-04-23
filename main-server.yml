@@ -2,12 +2,6 @@
 - hosts: server-new
   become: yes
 
-  handlers:
-  - name: restart nginx
-    service:
-      name: nginx
-      state: restarted
-
   pre_tasks:
     - name: install various packages
       apt:
@@ -67,33 +61,12 @@
         - /etc/apache2/sites-enabled/000-default.conf
     tags: apache
 
-  post_tasks:
-    - name: install Nginx
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - nginx
-      tags: nginx
-
-    - name: make sure Nginx services are enabled and running
-      service:
-        name: "{{ item }}"
-        enabled: yes
-        state: started
-      with_items:
-        - nginx
-      tags: nginx
-
-    - name: remove default from sites-enabled
-      file: path=/etc/nginx/sites-enabled/default state=absent
-      tags: nginx
-
-    - name: configure Nginx
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/nginx/conf.d/0-log-format.conf
-        - etc/nginx/conf.d/default.conf
-      notify: restart nginx
-      tags: nginx
+  - role: nginx
+    vars:
+      nginx_system: 'server'
+      nginx_templates:
+        - /etc/nginx/conf.d/0-log-format.conf
+        - /etc/nginx/conf.d/default.conf
+      nginx_remove:
+        - /etc/nginx/sites-enabled/default
+    tags: nginx
