@@ -48,7 +48,11 @@
     become: no
     tags: nodejs
 
-  - role: nginx-reverse-proxy
+  - role: nginx
     vars:
-      nginx_reverse_proxy_config: claw-reverse-proxy
-    tags: nginx-proxy
+      nginx_system: 'claw'
+      nginx_templates:
+        - /etc/nginx/sites-enabled/claw-reverse-proxy.conf
+      nginx_remove:
+        - /etc/nginx/sites-enabled/default
+    tags: nginx

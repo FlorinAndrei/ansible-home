@@ -1,5 +1,0 @@
----
-# Name of the config template to deploy.
-# Corresponds to a template at:
-#   templates/etc/nginx/sites-enabled/<name>.conf.j2
-nginx_reverse_proxy_config: ''

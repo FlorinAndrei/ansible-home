@@ -1,0 +1,17 @@
+---
+# Name of the system this role is being applied to. Determines the
+# templates subfolder to look in, e.g. templates/<nginx_system>/...
+nginx_system: ''
+
+# Absolute destination paths for files to install via `template`.
+# For each entry <dest>, the source is expected at:
+#   roles/nginx/templates/<nginx_system><dest>.j2
+nginx_templates: []
+
+# Absolute destination paths for files to install via `copy`.
+# For each entry <dest>, the source is expected at:
+#   roles/nginx/files/<nginx_system><dest>
+nginx_files: []
+
+# Absolute paths of files to remove.
+nginx_remove: []

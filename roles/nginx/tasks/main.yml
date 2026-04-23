@@ -1,0 +1,40 @@
+---
+- name: install Nginx
+  apt:
+    name: nginx
+    state: present
+  register: nginx_install
+
+- name: remove unwanted Nginx files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ nginx_remove }}"
+  notify: reload nginx
+
+- name: deploy Nginx templates
+  template:
+    src: "{{ nginx_system }}{{ item }}.j2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ nginx_templates }}"
+  notify: reload nginx
+
+- name: deploy Nginx files
+  copy:
+    src: "{{ nginx_system }}{{ item }}"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ nginx_files }}"
+  notify: reload nginx
+
+- name: make sure Nginx is enabled and running
+  service:
+    name: nginx
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and nginx_install is changed)
