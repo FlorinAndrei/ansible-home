@@ -1,0 +1,40 @@
+---
+- name: install Apache
+  apt:
+    name: apache2
+    state: present
+  register: apache_install
+
+- name: remove unwanted Apache files
+  file:
+    path: "{{ item }}"
+    state: absent
+  loop: "{{ apache_remove }}"
+  notify: restart apache2
+
+- name: deploy Apache templates
+  template:
+    src: "{{ apache_system }}{{ item }}.j2"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ apache_templates }}"
+  notify: restart apache2
+
+- name: deploy Apache files
+  copy:
+    src: "{{ apache_system }}{{ item }}"
+    dest: "{{ item }}"
+    owner: root
+    group: root
+    mode: '0644'
+  loop: "{{ apache_files }}"
+  notify: restart apache2
+
+- name: make sure Apache is enabled and running
+  service:
+    name: apache2
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and apache_install is changed)

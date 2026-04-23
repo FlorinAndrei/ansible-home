@@ -1,0 +1,17 @@
+---
+# Name of the system this role is being applied to. Determines the
+# templates subfolder to look in, e.g. templates/<apache_system>/...
+apache_system: ''
+
+# Absolute destination paths for files to install via `template`.
+# For each entry <dest>, the source is expected at:
+#   roles/apache/templates/<apache_system><dest>.j2
+apache_templates: []
+
+# Absolute destination paths for files to install via `copy`.
+# For each entry <dest>, the source is expected at:
+#   roles/apache/files/<apache_system><dest>
+apache_files: []
+
+# Absolute paths of files to remove.
+apache_remove: []
