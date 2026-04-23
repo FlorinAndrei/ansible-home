@@ -1,0 +1,4 @@
+---
+# Name of the system this role is being applied to. Determines the
+# templates subfolder to look in, e.g. templates/<cgit_system>/...
+cgit_system: ''

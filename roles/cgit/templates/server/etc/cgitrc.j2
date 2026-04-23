@@ -1,0 +1,22 @@
+# Managed by Ansible - do not edit manually
+
+virtual-root=/cgit
+
+css=/cgit-static/cgit.css
+logo=/cgit-static/cgit.png
+
+cache-size=0
+
+enable-http-clone=0
+enable-index-owner=0
+enable-log-filecount=1
+enable-log-linecount=1
+
+max-commit-count=35
+
+clone-url={{ main_user }}@{{ inventory_hostname }}:/storage/git/$CGIT_REPO_URL
+
+root-title=git repos on {{ inventory_hostname }}
+root-desc=bare repos under /storage/git
+
+scan-path=/storage/git

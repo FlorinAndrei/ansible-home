@@ -1,0 +1,30 @@
+---
+- name: install cgit and fcgiwrap
+  apt:
+    name:
+      - cgit
+      - fcgiwrap
+    state: present
+  register: cgit_install
+
+- name: grant fcgiwrap read access to the git repos
+  user:
+    name: www-data
+    groups: "{{ main_user }}"
+    append: yes
+  notify: restart fcgiwrap
+
+- name: deploy cgitrc
+  template:
+    src: "{{ cgit_system }}/etc/cgitrc.j2"
+    dest: /etc/cgitrc
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: make sure fcgiwrap is enabled and running
+  service:
+    name: fcgiwrap.socket
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and cgit_install is changed)
