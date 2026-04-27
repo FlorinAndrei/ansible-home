@@ -1,0 +1,23 @@
+network:
+  ethernets:
+    enp1s0:
+      addresses:
+      - {{ local_net_prefix }}.253/24
+      match:
+        macaddress: 78:55:36:05:3d:a8
+      nameservers:
+        addresses: [127.0.0.1]
+        search:
+        - {{ local_domain }}
+      set-name: enp1s0
+    enp2s0:
+      accept-ra: true
+      dhcp4: true
+      dhcp6: true
+      optional: true
+      dhcp4-overrides:
+        use-dns: false
+      dhcp6-overrides:
+        use-dns: false
+  version: 2
+  wifis: {}
