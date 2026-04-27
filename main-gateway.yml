@@ -63,17 +63,17 @@
         - etc/ssh/banner.txt
       notify: restart ssh
 
-#    - name: configure nftables
-#      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
-#      with_items:
-#        - etc/nftables.conf
-#      notify: restart nftables
+    - name: configure nftables
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
+      with_items:
+        - etc/nftables.conf
+      notify: restart nftables
 
-#    - name: enable nftables
-#      service:
-#        name: nftables
-#        enabled: yes
-#        state: started
+    - name: enable nftables
+      service:
+        name: nftables
+        enabled: yes
+        state: started
 
   roles:
   - role: unbound
@@ -87,13 +87,13 @@
       chrony_mode: 'ntp_server'
     tags: chrony
 
-#   - role: dhcp
-#     tags: dhcp
+  - role: dhcp
+    tags: dhcp
 
-#   - role: samba
-#     vars:
-#       samba_mode: 'gateway'
-#     tags: samba
+  - role: samba
+    vars:
+      samba_mode: 'gateway'
+    tags: samba
 
   - role: prometheus.prometheus.node_exporter
     tags: node_exporter
