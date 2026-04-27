@@ -14,11 +14,6 @@
       name: ssh
       state: restarted
 
-  - name: restart wireguard
-    service:
-      name: wg-quick@wg0
-      state: restarted
-
   pre_tasks:
     - name: enable ip forwarding
       sysctl: name=net.ipv4.ip_forward value=1 sysctl_file=/etc/sysctl.d/20-ip-forward.conf sysctl_set=yes
@@ -61,6 +56,13 @@
 #      with_items:
 #        - usr/local/bin/battery.sh
 
+    - name: configure ssh
+      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
+      with_items:
+        - etc/ssh/sshd_config.d/99-home.conf
+        - etc/ssh/banner.txt
+      notify: restart ssh
+
 #    - name: configure nftables
 #      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
 #      with_items:
@@ -73,57 +75,12 @@
 #        enabled: yes
 #        state: started
 
-    - name: install wireguard
-      apt:
-        name: "{{ packages }}"
-        state: present
-      vars:
-        packages:
-          - wireguard
-          - wireguard-tools
-
-    - name: configure wireguard
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0600
-      with_items:
-        - etc/wireguard/wg0.conf
-        - etc/wireguard/README.md
-      notify: restart wireguard
-
-    - name: enable wireguard
-      service:
-        name: wg-quick@wg0
-        enabled: yes
-        state: started
-
-    - name: create wireguard clients directory
-      file:
-        path: /etc/wireguard/clients
-        state: directory
-        owner: root
-        group: root
-        mode: '0755'
-
-    - name: loop through the wireguard_clients variable and create a file in /etc/wireguard/clients/ for each client
-      template:
-        src: templates/etc/wireguard/client.conf
-        dest: /etc/wireguard/clients/{{ client.name }}.conf
-        owner: root
-        group: root
-        mode: '0600'
-      loop: "{{ wireguard_clients }}"
-      loop_control:
-        loop_var: client
-
-    - name: configure ssh
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/ssh/sshd_config.d/99-home.conf
-        - etc/ssh/banner.txt
-      notify: restart ssh
-
   roles:
   - role: unbound
     tags: unbound
+
+  - role: wireguard
+    tags: wireguard
 
   - role: chrony
     vars:

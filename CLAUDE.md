@@ -35,6 +35,7 @@ Roles are in the `roles/` directory. Many roles support a mode variable to handl
 | chrony    | gateway, server, claw | `chrony_mode`    | `ntp_server`, `ntp_client`      | NTP time synchronization              |
 | dhcp      | gateway         | -                | -                               | DHCP server (isc-dhcp-server)         |
 | unbound   | gateway         | -                | -                               | DNS resolver + disables resolved listener |
+| wireguard | gateway         | -                | -                               | WireGuard VPN endpoint + client configs |
 | samba     | gateway, server | `samba_mode`     | `gateway`, `server`             | File sharing (WINS, SMB)              |
 | dovecot   | server          | -                | -                               | IMAP mail server                      |
 | postfix   | server          | -                | -                               | SMTP mail server                      |
