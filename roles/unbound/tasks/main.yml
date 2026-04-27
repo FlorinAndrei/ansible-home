@@ -1,0 +1,67 @@
+---
+- name: install Unbound
+  apt:
+    name: unbound
+    state: present
+  register: unbound_install
+
+- name: touch Unbound log file
+  file:
+    path: /var/log/unbound.log
+    state: touch
+    owner: syslog
+    group: adm
+    mode: 0640
+  changed_when: false
+
+- name: configure Unbound
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/unbound/unbound.conf.d/10-resolver.conf
+    - etc/unbound/unbound.conf.d/20-nameserver.conf
+    - etc/unbound/named.cache
+    - etc/unbound/home.local
+    - etc/unbound/home.local.reverse
+    - etc/unbound/README.md
+  notify: restart unbound
+
+- name: configure Unbound logging
+  template:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+    owner: root
+    group: root
+    mode: 0644
+  with_items:
+    - etc/rsyslog.d/10-unbound.conf
+    - etc/logrotate.d/unbound
+  notify: restart rsyslog
+
+- name: create /etc/systemd/resolved.conf.d
+  file:
+    path: /etc/systemd/resolved.conf.d
+    state: directory
+    owner: root
+    group: root
+    mode: 0755
+
+- name: disable resolved listener
+  template:
+    src: etc/systemd/resolved.conf.d/10-disable-resolved-listener.conf
+    dest: /etc/systemd/resolved.conf.d/10-disable-resolved-listener.conf
+    owner: root
+    group: root
+    mode: 0644
+  notify: restart resolved
+
+- name: ensure Unbound is enabled and running
+  service:
+    name: unbound
+    enabled: yes
+    state: started
+  when: not (ansible_check_mode and unbound_install is changed)

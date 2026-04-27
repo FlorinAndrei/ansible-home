@@ -4,3 +4,4 @@ fi
 
 source .venv/bin/activate
 pip install --upgrade -r requirements.txt
+ansible-galaxy collection install --upgrade -r requirements.yml

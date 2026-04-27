@@ -1,0 +1,19 @@
+---
+# Handlers fire in the order they are defined.
+# Resolved must restart before Unbound so that port 53 is freed before Unbound rebinds.
+- name: restart resolved
+  service:
+    name: systemd-resolved
+    enabled: yes
+    state: restarted
+
+- name: restart unbound
+  service:
+    name: unbound
+    state: restarted
+  when: not (ansible_check_mode and unbound_install is changed)
+
+- name: restart rsyslog
+  service:
+    name: rsyslog
+    state: restarted

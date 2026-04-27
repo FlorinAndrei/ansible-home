@@ -4,11 +4,6 @@
 
 
   handlers:
-  - name: restart unbound
-    service:
-      name: unbound
-      state: restarted
-
   - name: restart nftables
     service:
       name: nftables
@@ -17,11 +12,6 @@
   - name: restart ssh
     service:
       name: ssh
-      state: restarted
-
-  - name: restart rsyslog
-    service:
-      name: rsyslog
       state: restarted
 
   - name: restart wireguard
@@ -61,27 +51,27 @@
       with_items:
         - etc/htoprc
 
-    - name: install various scripts
-      copy:
-        src: templates/{{ item }}
-        dest: /{{ item }}
-        owner: root
-        group: root
-        mode: 0755
-      with_items:
-        - usr/local/bin/battery.sh
+#    - name: install various scripts
+#      copy:
+#        src: templates/{{ item }}
+#        dest: /{{ item }}
+#        owner: root
+#        group: root
+#        mode: 0755
+#      with_items:
+#        - usr/local/bin/battery.sh
 
-    - name: configure nftables
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
-      with_items:
-        - etc/nftables.conf
-      notify: restart nftables
+#    - name: configure nftables
+#      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0755
+#      with_items:
+#        - etc/nftables.conf
+#      notify: restart nftables
 
-    - name: enable nftables
-      service:
-        name: nftables
-        enabled: yes
-        state: started
+#    - name: enable nftables
+#      service:
+#        name: nftables
+#        enabled: yes
+#        state: started
 
     - name: install wireguard
       apt:
@@ -131,46 +121,22 @@
         - etc/ssh/banner.txt
       notify: restart ssh
 
-    - name: full Unbound configuration (re-applies and then extends minimal configuration from init-gateway.yml)
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/unbound/unbound.conf.d/10-resolver.conf
-        - etc/unbound/named.cache
-        - etc/unbound/unbound.conf.d/20-nameserver.conf
-        - etc/unbound/home.local
-        - etc/unbound/home.local.reverse
-        - etc/unbound/README.md
-      notify: restart unbound
-      tags: unbound
-    
-    - name: touch Unbound log file
-      file: path=/var/log/unbound.log state=touch owner=syslog group=adm mode=0640
-      changed_when: false
-      tags: unbound
-
-    - name: configure Unbound logging
-      template: src=templates/{{ item }} dest=/{{ item }} owner=root group=root mode=0644
-      with_items:
-        - etc/rsyslog.d/10-unbound.conf
-        - etc/logrotate.d/unbound
-      notify: restart rsyslog
-      tags: unbound
-
   roles:
+  - role: unbound
+    tags: unbound
+
   - role: chrony
     vars:
       chrony_mode: 'ntp_server'
     tags: chrony
 
-  - role: dhcp
-    tags: dhcp
+#   - role: dhcp
+#     tags: dhcp
 
-  - role: samba
-    vars:
-      samba_mode: 'gateway'
-    tags: samba
+#   - role: samba
+#     vars:
+#       samba_mode: 'gateway'
+#     tags: samba
 
-  - role: rc_local
-    vars:
-      rc_local_mode: 'gateway'
-    tags: rc.local
+  - role: prometheus.prometheus.node_exporter
+    tags: node_exporter
